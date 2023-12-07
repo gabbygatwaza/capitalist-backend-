@@ -20,7 +20,7 @@
 ```
 Move into backend folder
 ```
-cd capitalist
+cd src 
 ```
 Add the environment valiables  using those variable in .env.example:
 
