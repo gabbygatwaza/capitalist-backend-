@@ -1,8 +1,10 @@
 import express from 'express';
-import userRoutes from './userRoutes/userRoutes';
+import managerRoutes from './userRoutes/userRoutes.js';
+import adminRoutes from './admin/adminRoutes.js';
 
 const routes = express.Router();
 
-routes.use('/users', userRoutes);
+routes.use('/admin', adminRoutes);
+routes.use('/client', managerRoutes);
 
 export default routes;

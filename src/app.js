@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import router from './routes';
+import router from './routes/index.js';
+import dbConnection from './config/config.js';
+import dotenv from "dotenv"
+dotenv.config()
 const app = express();
 // filename
-
+const port = process.env.PORT || 3000
 app.use(
   cors({
     origin: '*',
@@ -21,5 +24,8 @@ app.get('/api', (req, res) => {
 });
 
 app.use('/api', router);
+dbConnection()
 
-export default app;
+app.listen(port, () =>
+  console.log(`App listening on ${port}!....`)
+);

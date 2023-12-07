@@ -1,22 +1,17 @@
 import express from "express";
 import {
-  getAllUsers,
-  fetchSingleUser,
-  deleteUser,updateUser
-} from "./../../controllers/usersController.js";
-import {
-  userRegistration,
-  userLoginCtrl,
-} from "../../controllers/authController.js";
-import { authMiddleware } from "../../middleware/authMiddleware.js";
+clientLogin, clientChangePassword
+} from "../../controllers/client/authController.js";
+import { registerClient, editClient, getAllClient, deleteClient } from "../../controllers/client/clientController.js";
+import { managerAuthMiddleware } from "../../middleware/clientManagerMiddleware.js";
 
-const router = express.Router();
+const managerRoutes = express.Router();
 
-router.post("/auth/register", userRegistration);
-router.post("/auth/login", userLoginCtrl);
-router.get("/", authMiddleware, getAllUsers);
-router.get("/:id", authMiddleware, fetchSingleUser);
-router.delete("/:id", authMiddleware, deleteUser);
-router.put("/:id", authMiddleware, updateUser);
+managerRoutes.post("/auth/register",managerAuthMiddleware, registerClient);
+managerRoutes.post("/auth/login", clientLogin);
+managerRoutes.put("/auth/change-password", managerAuthMiddleware, clientChangePassword);
+managerRoutes.put("/", managerAuthMiddleware, editClient);
+managerRoutes.get("/", managerAuthMiddleware, getAllClient);
+managerRoutes.delete("/", managerAuthMiddleware, deleteClient);
 
-export default router;
+export default managerRoutes;

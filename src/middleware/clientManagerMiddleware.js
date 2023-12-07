@@ -1,8 +1,7 @@
-import model from '../database/models';
-const User = model.User;
+import Manager from "../model/clientManager.js"
 import jwt from "jsonwebtoken";
 
-const authMiddleware = async (req, res, next) => {
+const managerAuthMiddleware = async (req, res, next) => {
   try {
     let token;
 
@@ -11,13 +10,13 @@ const authMiddleware = async (req, res, next) => {
 
       if (token) {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findByPk(decodedToken?.id);
+        const manager = await Manager.findById(decodedToken?._id);
 
-        if (user) {
-          req.user = user;
+        if (manager) {
+          req.manager = manager;
           next();
         } else {
-          throw new Error("User not found");
+          throw new Error("Manager not found");
         }
       } else {
         throw new Error("Invalid token");
@@ -26,9 +25,7 @@ const authMiddleware = async (req, res, next) => {
       throw new Error("No Token Attached to headers or it has Expired");
     }
   } catch (error) {
-    console.error(error.message);
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error: "Unauthorized to Perform This Action" });
   }
 };
-
-export { authMiddleware };
+export { managerAuthMiddleware };

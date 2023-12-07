@@ -1,28 +1,14 @@
 import dotenv from 'dotenv';
-
+import mongoose from "mongoose"
 dotenv.config();
 
-module.exports = {
-  development: {
-    JWT_SECRET: process.env.JWT_SECRET,
-    url: process.env.DATABASE_URL,
-    port: process.env.PORT,
-    dialect: 'postgres',
+const dbConnection = async() => {
+  try {
+    await mongoose.connect(process.env.DATABASE_URL)
+    console.log("Database Connected Successfully ❤️‍🔥🔥")
+  } catch (error) {
+    console.log(`Error: ${error.message}`);
+  }
+}
+export default dbConnection
 
-  },
-  test: {
-    JWT_SECRET: process.env.JWT_SECRET,
-    url: process.env.TEST_URL,
-    dialect: 'postgres',
-    port: process.env.PORT,
-  },
-  production: {
-    JWT_SECRET: process.env.JWT_SECRET,
-    url: process.env.DATABASE_URL,
-    dialect: 'postgres',
-    JWT_SECRET: process.env.JWT_SECRET,
-    url: process.env.DATABASE_URL,
-    dialect: 'postgres',
-    port: process.env.PORT
-  },
-};
