@@ -1,16 +1,16 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../../model/user.js";
+import Client from "../../models/client.js";
 
 const registerClient = async (req, res) => {
   try {
-    const client = await User.findOne({
+    const client = await Client.findOne({
       $or: [{ email: req.body.email }, { telnumber: req.body.phoneNumber }],
     });
     if (client) {
       return res.status(409).json({ message: "Client already exists" });
     }
-    const newClient = await User.create({
+    const newClient = await Client.create({
       firstname: req.body.firstName,
       lastname: req.body.lastName,
       email: req.body.email,
@@ -27,7 +27,6 @@ const registerClient = async (req, res) => {
         lastname: newClient.lastname,
         email: newClient.email,
         phoneNumber: newClient.telnumber,
-        token,
       },
     });
   } catch (error) {
@@ -38,7 +37,7 @@ const registerClient = async (req, res) => {
 // ==== Edit Client ====
 const editClient = async (req, res) => {
   try {
-    const client = await User.findByIdAndUpdate(req.query.id, { ...req.body }, {new:true});
+    const client = await Client.findByIdAndUpdate(req.params.id, { ...req.body }, {new:true});
     if (!client) {
       return res.status(404).json("Client not found in Our DB");
     }
@@ -57,7 +56,7 @@ const editClient = async (req, res) => {
 
 const getAllClient = async (req, res) => {
   try {
-    const clients = await User.find({});
+    const clients = await Client.find({});
     if (!clients) {
       return res.status(404).json("No Clients Found");
     }
@@ -70,7 +69,7 @@ const getAllClient = async (req, res) => {
 // ==== Delete Client =====
 const deleteClient = async(req,res)=> {
     try {
-        const client = await User.findByIdAndDelete(req.query.id);
+        const client = await Client.findByIdAndDelete(req.params.id);
         if(!client){
             return res.status(404).json('Client Not Found')
         }
