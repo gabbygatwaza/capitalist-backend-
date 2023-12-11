@@ -75,7 +75,21 @@ const deleteClient = async(req,res)=> {
         }
         return res.status(200).json({message : "Client Deleted Successfully"})
     } catch (error) {
-        
+      return res.status(500).json(error.message || "Server Error");   
     }
 }
-export { registerClient, editClient, getAllClient, deleteClient};
+
+// ===== Get Single User Info ====
+const getClientInfo = async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.id);
+    if(!client) return res.status(404).json('Client Not Found')
+    return res.status(200).json({
+                      message:"User Found successfully",
+                      data:client
+                    });
+  } catch (error) {
+    return res.status(500).json(error.message || "Server Error");
+  }
+}
+export { registerClient, editClient, getAllClient, deleteClient, getClientInfo};

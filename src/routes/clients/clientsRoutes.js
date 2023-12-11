@@ -5,6 +5,7 @@ import {
   editClient,
   getAllClient,
   deleteClient,
+  getClientInfo,
 } from "../../controllers/client/clientController.js";
 
 import { protect, restrictRoleTo } from '../../middlewares/middleware.js';
@@ -12,11 +13,11 @@ import { protect, restrictRoleTo } from '../../middlewares/middleware.js';
 const routes = express.Router();
 
 routes.route('/').post( protect, restrictRoleTo('admin','developer'), registerClient)
-                 .get(getAllClient);
+                 .get(protect, restrictRoleTo('admin','developer'),getAllClient);
                 
 
 routes.route('/:id').delete(protect, restrictRoleTo('admin','developer'), deleteClient)
-                 .put(editClient);
+                 .put(protect, restrictRoleTo('admin','developer'), editClient).get(protect, restrictRoleTo('admin','developer'),getClientInfo);
 
 
 export default routes;
