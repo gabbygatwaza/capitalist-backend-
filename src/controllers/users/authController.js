@@ -60,6 +60,27 @@ const userLogin = async(req, res)=> {
     }
 }
 
+//  ===== User Change password ===
+const userChangePassword = async (req, res) => {
+    try {
+        const user = await User.findOne({email:req.body.email});
+        if(!user) return res.status(404).json("User Not found");
+        const isPasswordMatched = await user.isPasswordMatched(req.body.oldPassword);
+        if (!isPasswordMatched) {
+            return res.status(400).json("Old password is incorrect");
+        }
+        user.password = req.body.newPassword;
+        await user.save()
+        return res.status(200).json({
+            message:"Password changed successfully",
+            data:user
+        });
+    } catch (error) {
+        return res.status(500).json(error.message || 'Server Error');
+    }
+}
 
 
-export {userRegistration, userLogin}
+
+
+export {userRegistration, userLogin, userChangePassword}

@@ -1,50 +1,52 @@
-import Manager from "../../model/clientManager.js";
-import jwt from "jsonwebtoken"
+import User from "../../models/users.js";
 
-const registerClientManager = async(req, res) => {
+// ==== Get All Users ===
+
+const getUsers = async (req, res) => {
     try {
-        const manager = await Manager.findOne({email:req.body.email});
-        if (manager) return res.status(409).json({message:"Email already registered"})
-        
-        const newManager = await Manager.create({
-         firstname : req.body.firstname,
-         lastname:req.body.lastname,
-         email : req.body.email,
-         phonenumber: req.body.phoneNumber,
-         password : req.body.password
-        })
-        const token = jwt.sign({_id:newManager._id}, process.env.SECRET_KEY)
-        return res.status(200).json({
-         message:'Successfully created',
-         data:{
-             _id: newManager._id,
-             firstname: newManager.firstname,
-             lastname: newManager.lastname,
-             email: newManager.email,
-             phoneNumber:newManager.telNumber,
-             token
-         }
-        })
-     } catch (error) {
-         return res.status(500).json(error.message || 'Server error');
-     }
-}
-
-// === Delete a client Manager =====
-
-const deleteClientManager = async(req, res)=> {
-    try {
-        const client = await Manager.findByIdAndDelete(req.query.id);
-        if(client) {
-            return res.status(200).json({message:`Account Deleted successfully`})
+        const users = await User.find();
+        if(!users) {
+            return res.status(404).json({msg: "No users found"})
         }
-        else{
-            throw Error('No such user found')
-        }
-        
+        res.status(200).json({
+            users: users
+        })
     } catch (error) {
-        return res.status(500).json(error.message || 'Server error'); 
+        return res.status(500).json(error.message || 'Server Error');  
     }
 }
 
-export {registerClientManager, deleteClientManager}
+// ==== Get Single User ===
+const getUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if(!user) {
+            return res.status(404).json({msg: "User not found"})
+        }
+        res.status(200).json({
+            user: user
+        })
+    } catch (error) {
+        return res.status(500).json(error.message || 'Server Error');  
+    }
+}
+
+//  ===== Change User Role ===
+
+const changeUserRole = async(req, res) => {
+    try {
+        const user = await User.findById(req.params.i);
+        if(!user) {
+            return res.status(404).json({msg: "User not found"})
+        }
+        user.role = req.body.newRole;
+        await user.save();
+        return res.status(200).json({
+            message: "User Role changed Successfully",
+            data:user
+        })
+    } catch (error) {
+        return res.status(500).json(error.message || 'Server Error');  
+    }
+}
+export {getUsers, getUser, changeUserRole}
