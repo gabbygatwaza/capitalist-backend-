@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
-    client:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+    userNames: {
+        type: String,
+        required: true
     },
-    goodData: [{
+    telNumber: {
+        type: Number,
+        required: true
+    },
+    email: {
+        type: String,
+        required: false,
+        default: ""
+    },
+    goodsData: [{
         name: {
             type: String,
             required: true
@@ -19,20 +27,62 @@ const orderSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        supplyer: {
+            type: String,
+            required: false
+        },
         description: {
+            type: String,
+            required: true
+        },
+        imageUrl: {
             type: String,
             required: true
         }
     }],
-}, {
-    toJSON: {
-        virtuals: true,
-      },
-      toObject: {
-        virtuals: true,
-      },
-    timestamps:true
-});
+    trackId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    orderState: {
+        type: String,
+        required: true,
+        default: "new"
+    },
+    location: {
+        type: String,
+        required: true,
+        default: "China"
+    },
+    subLocation: {
+        type: String,
+        required: true,
+        default: "Purchasing"
+    },
+    orderPrice: {
+        type: Number,
+        required: true,
+    },
+    orderDate: {
+        type: String,
+        required: true
+    },
+    weight: {
+        category: {
+            type: String,
+            required: false
+        },
+        weightQuantity: {
+            type: Number,
+            required: false
+        }
+    },
+    chosenCommunication: {
+        type: String,
+        required: true
+    }
+})
 
-const Order = mongoose.model("Order",orderSchema);
-export default Order;
+const order = mongoose.model("crm_order", orderSchema);
+export default order;
