@@ -1,8 +1,9 @@
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Client from "../../models/client.js";
+import AppError from "../../utils/appError.js";
+import catchAsync from "../../utils/catchAsync.js"
 
-const registerClient = async (req, res) => {
+const registerClient = catchAsync(async (req, res, next) => {
   try {
     const client = await Client.findOne({
       $or: [{ email: req.body.email }, { telnumber: req.body.phoneNumber }],
@@ -30,12 +31,12 @@ const registerClient = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json(error.message || "Server error");
+    return next(new AppError(error.message || "Somethign went wrong",500))
   }
-};
+})
 
 // ==== Edit Client ====
-const editClient = async (req, res) => {
+const editClient = catchAsync(async (req, res, next) => {
   try {
     const client = await Client.findByIdAndUpdate(req.params.id, { ...req.body }, {new:true});
     if (!client) {
@@ -48,13 +49,13 @@ const editClient = async (req, res) => {
         data: client,
       });
   } catch (error) {
-    return res.status(500).json(error.message || "Server Error");
+    return next(new AppError(error.message || "Somethign went wrong",500))
   }
-};
+})
 
 // ===== Get All client =====
 
-const getAllClient = async (req, res) => {
+const getAllClient = catchAsync(async (req, res, next) => {
   try {
     const clients = await Client.find({});
     if (!clients) {
@@ -62,25 +63,25 @@ const getAllClient = async (req, res) => {
     }
     return res.status(200).json({ data: clients });
   } catch (error) {
-    return res.status(500).json(error.message || "Server Error");
+    return next(new AppError(error.message || "Somethign went wrong",500))
   }
-};
+})
 
 // ==== Delete Client =====
-const deleteClient = async(req,res)=> {
-    try {
-        const client = await Client.findByIdAndDelete(req.params.id);
-        if(!client){
-            return res.status(404).json('Client Not Found')
-        }
-        return res.status(200).json({message : "Client Deleted Successfully"})
-    } catch (error) {
-      return res.status(500).json(error.message || "Server Error");   
-    }
-}
+const deleteClient = catchAsync(async(req,res, next)=> {
+  try {
+      const client = await Client.findByIdAndDelete(req.params.id);
+      if(!client){
+          return res.status(404).json('Client Not Found')
+      }
+      return res.status(200).json({message : "Client Deleted Successfully"})
+  } catch (error) {
+    return next(new AppError(error.message || "Somethign went wrong",500))  
+  }
+})
 
 // ===== Get Single User Info ====
-const getClientInfo = async (req, res) => {
+const getClientInfo = catchAsync(async (req, res, next) => {
   try {
     const client = await Client.findById(req.params.id);
     if(!client) return res.status(404).json('Client Not Found')
@@ -89,7 +90,7 @@ const getClientInfo = async (req, res) => {
                       data:client
                     });
   } catch (error) {
-    return res.status(500).json(error.message || "Server Error");
+    return next(new AppError(error.message || "Somethign went wrong",500))  
   }
-}
+})
 export { registerClient, editClient, getAllClient, deleteClient, getClientInfo};

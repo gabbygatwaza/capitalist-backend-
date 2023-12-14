@@ -1,8 +1,10 @@
 import User from "../../models/users.js";
+import catchAsync from "../../utils/catchAsync.js";
+import AppError from "../../utils/appError.js";
 
 // ==== Get All Users ===
 
-const getUsers = async (req, res) => {
+const getUsers = catchAsync(async (req, res, next) => {
     try {
         const users = await User.find();
         if(!users) {
@@ -12,12 +14,12 @@ const getUsers = async (req, res) => {
             users: users
         })
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');  
+        return next(new AppError(error.message || "Somethign went wrong",500)) 
     }
-}
+})
 
 // ==== Get Single User ===
-const getUser = async (req, res) => {
+const getUser = catchAsync(async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
         if(!user) {
@@ -27,13 +29,13 @@ const getUser = async (req, res) => {
             user: user
         })
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');  
+        return next(new AppError(error.message || "Somethign went wrong",500))  
     }
-}
+})
 
 //  ===== Change User Role ===
 
-const changeUserRole = async(req, res) => {
+const changeUserRole = catchAsync(async(req, res, next) => {
     try {
         const user = await User.findById(req.params.i);
         if(!user) {
@@ -46,13 +48,13 @@ const changeUserRole = async(req, res) => {
             data:user
         })
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');  
+        return next(new AppError(error.message || "Somethign went wrong",500))   
     }
-}
+})
 
 // ===== Query Specific staff ===
 
-const queryStaff = async (req, res) => {
+const queryStaff = catchAsync(async (req, res, next) => {
     
     try {
         const { role } = req.query;
@@ -91,8 +93,8 @@ const queryStaff = async (req, res) => {
                 return res.status(400).json({Error:"Invalid query"});
         }
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');
+        return next(new AppError(error.message || "Somethign went wrong",500)) 
     }
-};
+})
 
 export {getUsers, getUser, changeUserRole, queryStaff}

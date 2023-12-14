@@ -1,8 +1,10 @@
 import User from "../../models/users.js";
 import  Jwt from "jsonwebtoken";
+import AppError from "../../utils/appError.js";
+import catchAsync from "../../utils/catchAsync.js";
 
 // ======= Admin Registration ======
-const userRegistration = async(req, res)=> {
+const userRegistration = catchAsync(async(req, res, next)=> {
     try {
        const admin = await User.findOne({email:req.body.email});
        if(admin){
@@ -26,13 +28,13 @@ const userRegistration = async(req, res)=> {
         }
        })
     } catch (error) {
-        return res.status(500).json(error.message || 'Server error');
+        return next(new AppError(error.message || "Somethign went wrong",500))
     }
-}
+})
 
 // ======= User Login ======
 
-const userLogin = async(req, res)=> {
+const userLogin = catchAsync(async(req, res, next)=> {
     try {
        const user = await User.findOne({email:req.body.email});
        if(!user) {
@@ -57,12 +59,12 @@ const userLogin = async(req, res)=> {
         return res.status(401).json("Invalid Email or Password");
        }
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');
+        return next(new AppError(error.message || "Somethign went wrong",500))
     }
-}
+})
 
 //  ===== User Change password ===
-const userChangePassword = async (req, res) => {
+const userChangePassword = catchAsync(async (req, res, next) => {
     try {
         const user = await User.findOne({email:req.body.email});
         if(!user) return res.status(404).json("User Not found");
@@ -77,9 +79,9 @@ const userChangePassword = async (req, res) => {
             data:user
         });
     } catch (error) {
-        return res.status(500).json(error.message || 'Server Error');
+        return next(new AppError(error.message || "Somethign went wrong",500))
     }
-}
+})
 
 
 
